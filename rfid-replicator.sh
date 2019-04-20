@@ -1,8 +1,6 @@
 #!/bin/bash
 
-function generateRandomCardDumpName {
-    echo "/tmp/$(date +%s | sha256sum | base64 | head -c 32)"
-}
+. common.sh
 
 function saveCardContent {
     CARD_NAME=$1
