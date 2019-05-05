@@ -2,35 +2,16 @@
 
 . common.sh
 
-function saveCardContent {
-    CARD_NAME=$1
-    RANDOM_CARD_NAME=$2
-
-    read -p "Put the $CARD_NAME card on the reader. Press Enter when it's done." key
-    echo "Current $CARD_NAME card data :"
-    sudo nfc-list
-
-    sudo mfoc -P 500 -O $RANDOM_CARD_NAME
-    echo "$CARD_NAME card's content saved in file : $RANDOM_CARD_NAME"
-}
-
-echo "Deactivating USB standard mode"
-sudo modprobe -r pn533_usb
-sudo modprobe -r pn533
-
-echo "Checking NFC reader"
-sudo nfc-list
+deactivatingUSBStandardMode
+nfcList
 
 ORIGINAL_CARD_NAME=$(generateRandomCardDumpName)
 saveCardContent "original" $ORIGINAL_CARD_NAME
 
 CLONE_CARD_NAME=$(generateRandomCardDumpName)
 saveCardContent "clone" $CLONE_CARD_NAME
+overrideRFIDContent $ORIGINAL_CARD_NAME $CLONE_CARD_NAME
 
-echo "Applying Original content into the clone card"
-sudo nfc-mfclassic W a $ORIGINAL_CARD_NAME $CLONE_CARD_NAME
-
-echo "Done ! Now clone card content is :"
-sudo nfc-list
+nfcList "Done ! Now clone card content is :"
 
 exit 0;
